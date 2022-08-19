@@ -1,0 +1,41 @@
+import pygame
+
+pygame.init()
+
+white = (255,255,255)
+black = (0,0,0)
+
+red = (255,0,0)
+green = (0,255,0)
+blue = (0,0,255)
+
+
+gameDisplay = pygame.display.set_mode((800,600))
+gameDisplay.fill(black)
+
+Typical stuff above, now let's cover what would be used to draw a pixel:
+
+
+pixAr = pygame.PixelArray(gameDisplay)
+pixAr[10][20] = green
+
+Alright, so what have we done above? What we're doing is assigning the entire pixel array to a value, referencing it using pygame.PixelArray. So what this function does is it returns the pixel array of the specified surface (which is the entire display in our case). Then, we're able to modify it. So, we specify pixAr[10][20], which means the pixel residing at (10,20), then we're able to re-assign it. In our case, we call it green.
+
+pygame.draw.line(gameDisplay, blue, (100,200), (300,450),5)
+
+Drawing lines, above, is easy enough. The function just asks where do we want to draw it, what color do we want it, and then we specify the two coordinate pairs that we want to draw a line between.
+
+
+pygame.draw.rect(gameDisplay, red, (400,400,50,25))
+
+We've already extensively covered the drawing of rectangles in this series, but this specific "drawing things" tutorial wouldn't be complete without it. This function asks where to draw, what color, and then asks for a final tuple that contains: the top right x and y, followed by width, then height.
+
+
+pygame.draw.circle(gameDisplay, white, (150,150), 75)
+
+Here we draw a circle. This function asks where to draw, what color, what is the center point of the circle, and what is the radius. There is another parameter that you can add which is width.
+
+
+pygame.draw.polygon(gameDisplay, green, ((25,75),(76,125),(250,375),(400,25),(60,540)))
+
+Finally, we have polygons. This function asks where to draw, what color, and then asks for a long tuple, of tuples, containing the points of the polygon.

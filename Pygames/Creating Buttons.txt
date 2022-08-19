@@ -1,0 +1,215 @@
+Part 1
+Now that we've got this great start screen (not really), and we know how to draw shapes, we're curious about stepping things up a bit and we want to add buttons to our game. The only problem? We have no idea how to do buttons. Surely PyGame has some sort of buttons module built in right? No.
+
+Do we give up?
+
+..?
+
+No! Instead, we see if we can just build our own. So far, we've shown how we can draw rectangles, so we can do that. We also know how to add text to the screen and center it, so there's that. How about making the button actually do something when clicked? This isn't something we've covered completely, but do you remember when we printed out all of the events in our event for loop? Contained in there was our mouse position and actions. With that, we can indeed know when a user has clicked within the bounds of our button. We can even take it a bit further and make our buttons "interactive" to a mouse hovering over them!
+
+With all of that in mind, it's a multi-step problem, which we need to just take one step at a time. Let's get started!
+
+The new game intro code:
+
+def game_intro():
+
+    intro = True
+
+    while intro:
+        for event in pygame.event.get():
+            print(event)
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+                
+        gameDisplay.fill(white)
+        largeText = pygame.font.Font('freesansbold.ttf',115)
+        TextSurf, TextRect = text_objects("A bit Racey", largeText)
+        TextRect.center = ((display_width/2),(display_height/2))
+        gameDisplay.blit(TextSurf, TextRect)
+
+        pygame.draw.rect(gameDisplay, green,(150,450,100,50))
+        pygame.draw.rect(gameDisplay, red,(550,450,100,50))
+
+
+        pygame.display.update()
+        clock.tick(15)
+
+The only change here is the addition of a couple of rectangles. Should be easy enough, since there's no topic being covered here.
+
+Part 2
+
+A button is no good if a user doesn't actually realize that it is a button. There are all sorts of ways to make buttons appear to be buttons. One of the more popular ways to alert a user to the interactive-ness of a button is to have the button change color when a mouse hovers over it. That's what we're going to do here. We can do this using very similar logic as we used in the previous videos to know when objects had collided, only this time we're looking to find out if the mouse collided with our object. Our new game_intro function:
+def game_intro():
+
+    intro = True
+
+    while intro:
+        for event in pygame.event.get():
+            #print(event)
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+                
+        gameDisplay.fill(white)
+        largeText = pygame.font.Font('freesansbold.ttf',115)
+        TextSurf, TextRect = text_objects("A bit Racey", largeText)
+        TextRect.center = ((display_width/2),(display_height/2))
+        gameDisplay.blit(TextSurf, TextRect)
+
+
+        mouse = pygame.mouse.get_pos()
+
+        #print(mouse)
+
+        if 150+100 > mouse[0] > 150 and 450+50 > mouse[1] > 450:
+            pygame.draw.rect(gameDisplay, bright_green,(150,450,100,50))
+        else:
+            pygame.draw.rect(gameDisplay, green,(150,450,100,50))
+        pygame.draw.rect(gameDisplay, red,(550,450,100,50))
+        pygame.display.update()
+        clock.tick(15)
+The additional code is asking if the mouse is within the boundaries of the rectangle. If it is, then we use a lighter color. This of course requires a regular green and a light green to be defined.
+
+Here are my colors at the moment:
+
+red = (200,0,0)
+green = (0,200,0)
+
+bright_red = (255,0,0)
+bright_green = (0,255,0)
+
+Part 3
+
+Now that we've got these nice interactive buttons, we probably should put some text on them that lets the user know what the button actually does.
+
+Just like our interactive button was really mostly just an addition of a bit of collision logic from before, placing our text will be very similar to the logic we used to place text to the screen.
+
+def game_intro():
+
+    intro = True
+
+    while intro:
+        for event in pygame.event.get():
+            #print(event)
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+                
+        gameDisplay.fill(white)
+        largeText = pygame.font.Font('freesansbold.ttf',115)
+        TextSurf, TextRect = text_objects("A bit Racey", largeText)
+        TextRect.center = ((display_width/2),(display_height/2))
+        gameDisplay.blit(TextSurf, TextRect)
+
+
+        mouse = pygame.mouse.get_pos()
+
+        #print(mouse)
+
+        if 150+100 > mouse[0] > 150 and 450+50 > mouse[1] > 450:
+            pygame.draw.rect(gameDisplay, bright_green,(150,450,100,50))
+        else:
+            pygame.draw.rect(gameDisplay, green,(150,450,100,50))
+
+        smallText = pygame.font.Font("freesansbold.ttf",20)
+        textSurf, textRect = text_objects("GO!", smallText)
+        textRect.center = ( (150+(100/2)), (450+(50/2)) )
+        gameDisplay.blit(textSurf, textRect)
+
+            
+        pygame.draw.rect(gameDisplay, red,(550,450,100,50))
+
+        pygame.display.update()
+        clock.tick(15)
+
+Part 4
+
+Now that we've got some fancy code coming along, it's time to move all of this to a function, so that we can use this dynamically to create other buttons, rather than copy and pasting the code over and over!
+
+The conversion to a function is pretty straight forward. If you want more explanation than the code, check out the video tutorial on this above.
+
+This function has the parameters of:
+
+msg: What do you want the button to say on it.
+
+x: The x location of the top left coordinate of the button box.
+
+y: The y location of the top left coordinate of the button box.
+
+w: Button width.
+
+h: Button height.
+
+ic: Inactive color (when a mouse is not hovering).
+
+ac: Active color (when a mouse is hovering).
+
+def button(msg,x,y,w,h,ic,ac):
+    mouse = pygame.mouse.get_pos()
+
+    if x+w > mouse[0] > x and y+h > mouse[1] > y:
+        pygame.draw.rect(gameDisplay, ac,(x,y,w,h))
+    else:
+        pygame.draw.rect(gameDisplay, ic,(x,y,w,h))
+
+    smallText = pygame.font.Font("freesansbold.ttf",20)
+    textSurf, textRect = text_objects(msg, smallText)
+    textRect.center = ( (x+(w/2)), (y+(h/2)) )
+    gameDisplay.blit(textSurf, textRect)
+Now that we have this button function, we need a way to pass other functions through it, so our buttons can actually "run" a function when clicked. To do this, we just need to add another parameter and then just pass the function object through it.
+
+Part 5
+
+Wow, we have such a neat button. It has text, color, and hover effects. The only downside at this point? It does nothing.
+
+Well that's kind of a problem, __init__?
+
+...I crack myself up.
+
+We saw that we could use mouse = pygame.mouse.get_pos() to grab the actual position of the mouse, what about where the mouse clicks?
+
+There is a way to collect clicks, like key presses, using "pygame.mouse.get_pressed()" This means we can combine both of these to find out if there was a click within the button.
+
+Here's the new button function:
+
+def button(msg,x,y,w,h,ic,ac,action=None):
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
+    print(click)
+    if x+w > mouse[0] > x and y+h > mouse[1] > y:
+        pygame.draw.rect(gameDisplay, ac,(x,y,w,h))
+
+        if click[0] == 1 and action != None:
+            action()         
+    else:
+        pygame.draw.rect(gameDisplay, ic,(x,y,w,h))
+
+    smallText = pygame.font.SysFont("comicsansms",20)
+    textSurf, textRect = text_objects(msg, smallText)
+    textRect.center = ( (x+(w/2)), (y+(h/2)) )
+    gameDisplay.blit(textSurf, textRect)
+and the new game_intro function showing us passing the function:
+
+def game_intro():
+
+    intro = True
+
+    while intro:
+        for event in pygame.event.get():
+            #print(event)
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+                
+        gameDisplay.fill(white)
+        largeText = pygame.font.SysFont("comicsansms",115)
+        TextSurf, TextRect = text_objects("A bit Racey", largeText)
+        TextRect.center = ((display_width/2),(display_height/2))
+        gameDisplay.blit(TextSurf, TextRect)
+
+        button("GO!",150,450,100,50,green,bright_green,game_loop)
+        button("Quit",550,450,100,50,red,bright_red,quitgame)
+
+        pygame.display.update()
+        clock.tick(15)
