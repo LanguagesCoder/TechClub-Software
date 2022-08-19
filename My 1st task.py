@@ -1,0 +1,6 @@
+print("My name is Durgesh Hemant Kavate")
+print("I am in 6th standard")
+print("I am studing in P.K. International English School")
+print("Iam in 12 years old")  
+print("my mother name is Leena Hemant Kavate")
+print("I am living in Pune")
